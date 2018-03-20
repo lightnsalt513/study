@@ -1,0 +1,95 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>exam</title>
+<link rel="stylesheet" href="common.css" />
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+<script>
+$(function(){
+
+	// Question1
+	var exam1 = $('.exam_q').eq(0);
+		examCounter1 = 0;
+
+	while (examCounter1 < 5) {
+		exam1.append('<input type="checkbox"> <br>');
+		examCounter1++;
+	}
+
+	// Question2
+	var exam2 = $('.exam_q').eq(1);
+
+	for (var i = 0; i < 5; i++) {
+		if (i%2 == 1) {
+			exam2.append('<input type="text"> <br>');
+		} else {
+			exam2.append('<input type="checkbox"> <br>');
+		}
+	}
+
+	// Question3
+	var exam3 = $('.exam_q').eq(2);
+	for (var i = 1; i <= 9; i++) {
+		exam3.append('8 X ' + i + ' = ' + (i*8) + '<br>');
+	}
+
+	// Question4
+	var exam4 = $('.exam_q').eq(3);
+		examCounter4 = 1;
+	while (examCounter4 <= 9) {
+		for (var i = 1; i <= 9; i++) {
+			exam4.append( examCounter4 + ' X ' + i + ' = ' + (examCounter4 * i));
+		}
+		exam4.append('<br>');
+		examCounter4++;
+	}
+});
+</script>
+</head>
+<body>
+<!-- wrapper [s] -->
+
+<div id="example">
+    <span>A child element</span>
+</div>
+<div id="wrapper">
+	<!-- header [s] -->
+	<div id="header">
+	</div>
+	<!-- header [e] -->
+	<hr />
+	<!-- container [s] -->
+	<div id="container">
+		<div class="exam_wrap">
+			<h1>Q. while 문으로 5개의 input 을 출력하세요.</h1>
+			<div class="exam_q">
+			</div>
+		</div>
+		<div class="exam_wrap">
+			<h1>Q. for 문으로 5개의 input 을 만들되, 짝수는 text / 홀수는 checkbox 를 출력하세요.</h1>
+			<div class="exam_q">
+			</div>
+		</div>
+		<div class="exam_wrap">
+			<h1>Q. for 문으로 구구단 8단을 출력하세요.</h1>
+			<div class="exam_q">
+			</div>
+		</div>
+		<div class="exam_wrap">
+			<h1>Q. for/while 문 2개로 구구단을 출력하세요.</h1>
+			<div class="exam_q">
+			</div>
+		</div>
+	</div>
+	<!-- container [e] -->
+	<hr />
+	<!-- footer [s] -->
+	<div id="footer">
+	</div>
+	<!-- footer [e] -->
+</div>
+<!-- wrapper [e] -->
+</body>
+</html>
