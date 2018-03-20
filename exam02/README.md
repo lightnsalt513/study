@@ -58,10 +58,10 @@
     </script>
     ```
 
-* Array.slice() : 배열 내 선택된 요소를 새로운 배열 객체로 반환
-                  ㄴ array.slice(start, end)
-                  ㄴ start : 선택적; !!!!! 확인
-                  ㄴ 위의 argument에서 starting index는 포함되며, ending index 요소는 미포함됨
+* Array.slice() : 배열 내 선택된 요소를 새로운 배열 객체로 반환\
+                  ㄴ array.slice(start, end)\
+                  ㄴ start : 선택적; !!!!! 확인\
+                  ㄴ 위의 argument에서 starting index는 포함되며, ending index 요소는 미포함됨\
                   ㄴ 음수 값으로 지정시 배열의 마지막 요소부터 선택됨
     ```html
     <script>
@@ -73,10 +73,10 @@
     </script>
     ```
 
-* Array.splice() : 배열에서 선택된 요소를 추가 또는 제거하여 해당 요소를 반환함
-                   ㄴ array.splice(index, howmany, item1, ....., itemX)
-                   ㄴ index : 필수; 추가/제거할 요소의 위치 (배열의 마지막 순서부터 지정하고자 하는 경우 음수값 사용)
-                   ㄴ howmany : 선택적; 제거될 요소의 개수
+* Array.splice() : 배열에서 선택된 요소를 추가 또는 제거하여 해당 요소를 반환함\
+                   ㄴ array.splice(index, howmany, item1, ....., itemX)\
+                   ㄴ index : 필수; 추가/제거할 요소의 위치 (배열의 마지막 순서부터 지정하고자 하는 경우 음수값 사용)\
+                   ㄴ howmany : 선택적; 제거될 요소의 개수\
                    ㄴ item1,...,itemX : 선택적; 배열에 추가될 요소
     ```html
     <script>
@@ -88,7 +88,7 @@
     </script>
     ```
 
-* Array.push() : 배열의 마지막 순서에 새로운 요소를 추가한 후 새로운 length값 반환
+* Array.push() : 배열의 마지막 순서에 새로운 요소를 추가한 후 새로운 length값 반환\
                  ㄴ array.push(item1, item2, ..., itemX)
     ```html
     <script>
@@ -99,7 +99,7 @@
     </script>
     ```         
 
-* Array.pop() : 배열의 마지막 요소를 제거하고 해당 요소를 반환함
+* Array.pop() : 배열의 마지막 요소를 제거하고 해당 요소를 반환함\
                 ㄴ 배열의 length 값을 변경하게 됨
     ```html
     <script>
@@ -109,7 +109,7 @@
     </script>
     ``` 
 
-* Array.shift() : 배열의 첫번째 요소를 제거하고 해당 요소를 반환함
+* Array.shift() : 배열의 첫번째 요소를 제거하고 해당 요소를 반환함\
                   ㄴ 배열의 length 값을 변경하게 됨
     ```html
     <script>
@@ -119,7 +119,7 @@
     </script>
     ``` 
 
-* Array.unshift() : 배열의 첫번째 순서에 새로운 요소를 추가한 후 새로운 length값을 반환
+* Array.unshift() : 배열의 첫번째 순서에 새로운 요소를 추가한 후 새로운 length값을 반환\
                     ㄴ array.unshift(item1, item2, ..., itemX)
     ```html
     <script>
@@ -130,7 +130,7 @@
     </script>
     ```
 
-* Array.toString() : 배열을 문자열로 반환
+* Array.toString() : 배열을 문자열로 반환\
                      ㄴ IE8 미지원
     ```html
     <script>
@@ -141,10 +141,10 @@
     </script>
     ```
 
-* Array.indexOf() : 탐색하는 요소의 위치를 반환 (탐색요소 없는 경우 -1 반환하며 동일 요소가 여러개일 경우 첫번째로 탐색되는 요소 위치를 반환)
-                    ㄴ array.indexOf(item, start)
-                    ㄴ item: 필수; 탐색할 요소
-                    ㄴ start: 선택적; 탐색 시작할 위치; 미지정 시 0에서 시작 (음수값은 마지막 순서부터의 위치를 나타냄)
+* Array.indexOf() : 탐색하는 요소의 위치를 반환 (탐색요소 없는 경우 -1 반환하며 동일 요소가 여러개일 경우 첫번째로 탐색되는 요소 위치를 반환)\
+                    ㄴ array.indexOf(item, start)\
+                    ㄴ item: 필수; 탐색할 요소\
+                    ㄴ start: 선택적; 탐색 시작할 위치; 미지정 시 0에서 시작 (음수값은 마지막 순서부터의 위치를 나타냄)\
                     ㄴ 탐색을 배열의 마지막 요소부터 시작하고 싶다면 lastIndexOf() 함수 사용
     ```html
     <script>
@@ -157,9 +157,9 @@
     ```
 
 ## String.prototype
-* String.replace() : 문자열에서 특정값 또는 정규식(regular expression)을 탐색하여 지정한 새로운 값으로 대체한 새로운 문자열을 반환
-                     ㄴ 정규식이 아닌 값을 대체하는 경우 첫번째 탐색 결과만 대체하기에 global modifier (g)를 사용해야 함
-                     ㄴ string.replace(searchvalue, newvalue)
+* String.replace() : 문자열에서 특정값 또는 정규식(regular expression)을 탐색하여 지정한 새로운 값으로 대체한 새로운 문자열을 반환\
+                     ㄴ 정규식이 아닌 값을 대체하는 경우 첫번째 탐색 결과만 대체하기에 global modifier (g)를 사용해야 함\
+                     ㄴ string.replace(searchvalue, newvalue)\
                      ㄴ searchvalue, newvalue : 모두 필수값
     ```html
     <script>
@@ -173,9 +173,9 @@
     </script>
     ```
 
-* String.slice() : 문자열의 일정 부분을 반환
-                   ㄴ string.slice(start, end)
-                   ㄴ start : 필수; 지정된 부분의 시작 지점 인덱스 (문자열의 마지막 부터 시작하고 싶은 경우 음수값 사용)
+* String.slice() : 문자열의 일정 부분을 반환\
+                   ㄴ string.slice(start, end)\
+                   ㄴ start : 필수; 지정된 부분의 시작 지점 인덱스 (문자열의 마지막 부터 시작하고 싶은 경우 음수값 사용)\
                    ㄴ end : 선택적; 반환할 문자의 마지막 문자 (해당 인덱스에 위치한 문자는 미포함)
     ```html
     <script>
@@ -189,9 +189,9 @@
     </script>
     ```
 
-* String.split() : 문자열을 분리하여 배열로 변환
-                   ㄴ string.split(separator, limit)
-                   ㄴ separator : 선택적; 문자 또는 정규식(regular expression)을 지정하여 문자를 분리; parameter값 지정되지 않는 경우 전체 문자열이 배열의 한 요소로 반환됨
+* String.split() : 문자열을 분리하여 배열로 변환\
+                   ㄴ string.split(separator, limit)\
+                   ㄴ separator : 선택적; 문자 또는 정규식(regular expression)을 지정하여 문자를 분리; parameter값 지정되지 않는 경우 전체 문자열이 배열의 한 요소로 반환됨\
                    ㄴ limit : 선택적; 리턴되는 배열의 숫자를 제한
     ```html
     <script>
@@ -206,9 +206,8 @@
     </script>
     ```
 
-* String.search() : 문자열에서 특정값(문자 또는 정규식)을 탐색하고 일치하는 값의 위치를 반환
+* String.search() : 문자열에서 특정값(문자 또는 정규식)을 탐색하고 일치하는 값의 위치를 반환\
                     ㄴ 일치하는 값 없는 경우 -1 반환
-
     ```html
     <script>
     var myStr = 'Flying Cow Cow';
@@ -218,7 +217,7 @@
     </script>
     ```
 
-* String.match() : 문자열에서 특정 정규식(regular expression)과 일치하는 값을 찾으며 배열 개체로 반환함
+* String.match() : 문자열에서 특정 정규식(regular expression)과 일치하는 값을 찾으며 배열 개체로 반환함\
                    ㄴ 일치하는 값이 없는 경우 null 반환
     ```html
     <script>
@@ -228,7 +227,7 @@
     </script>
     ```
 
-* String.trim() : 문자열의 앞뒤에서 whitespace를 제거
+* String.trim() : 문자열의 앞뒤에서 whitespace를 제거\
                   ㄴ IE8 미지원
     ```html
     <script>
@@ -238,11 +237,11 @@
     </script>
     ```
 
-* String.indexOf() : 문자열에서 지정된 값이 
-                     ㄴ 해당 함수는 case sensitive
-                     ㄴ 일치하는 값이 없는 경우 -1 반환
-                     ㄴ string.indexOf(searchvalue, start)
-                     ㄴ searchvalue : 필수; 탐색할 문자
+* String.indexOf() : 문자열에서 지정된 값이\
+                     ㄴ 해당 함수는 case sensitive\
+                     ㄴ 일치하는 값이 없는 경우 -1 반환\
+                     ㄴ string.indexOf(searchvalue, start)\
+                     ㄴ searchvalue : 필수; 탐색할 문자\
                      ㄴ start : 선택적; 디폴트값 0; 시작하는 위치
     ```html
     <script>
@@ -253,8 +252,8 @@
     ```
 
 ## Object.prototype
-* Object.hasOwnProperty() : 개체가 지정된 이름의 속성을 포함하는지 확인하고 true/false 값을 반환
-                            ㄴ object.hasOwnProperty(proName)
+* Object.hasOwnProperty() : 개체가 지정된 이름의 속성을 포함하는지 확인하고 true/false 값을 반환\
+                            ㄴ object.hasOwnProperty(proName)\
                             ㄴ IE8 미지원
     ```html
     <script>
