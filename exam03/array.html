@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>exam</title>
+<link rel="stylesheet" href="common.css" />
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+<script>
+$(function(){
+	// Question 1
+	var examWrap = $('#container').find('.exam_wrap').eq(0),
+			examTarget = examWrap.find('.exam_q'),
+			examBtn = examWrap.find('button'),
+			examSample = ['Jay', 'Do'];
+
+	examBtn.on('click', function(){
+		var examStr = examSample.join(' ');
+		examTarget.text(examStr);
+	});
+
+	// Question 2
+	var examWrap2 = $('#container').find('.exam_wrap').eq(1),
+			examTarget2 = examWrap2.find('.exam_q'),
+			examBtn2 = examWrap2.find('button'),
+			examSample2 = 'question';
+
+	examBtn2.on('click', function(){
+		var examSampleLength2 = examSample2.length;
+		examTarget2.html('');
+
+		for(var i = examSampleLength2 - 1; i >= 0; i--){
+			examTarget2.append(examSample2.charAt(i));
+		}
+	});
+
+	// Question 3
+	var examWrap3 = $('#container').find('.exam_wrap').eq(2),
+			examTarget3 = examWrap3.find('.exam_q'),
+			examBtn3 = examWrap3.find('button'),
+			examSample3 = [40, 100, 1, 5, 25, 10];
+
+	examBtn3.on('click', function() {
+		var newArray3 = [];
+		for(var i = 0; i < examSample3.length; i++) {
+			var maxNumber3 = Math.max.apply(null, examSample3),
+					maxIndex3 = examSample3.indexOf(maxNumber3);
+
+			newArray3.push(maxIndex3);
+			examSample3.splice(maxIndex3, 1, '');
+		}
+		console.log(newArray3);
+	});
+
+	// Question 4
+	var examWrap4 = $('#container').find('.exam_wrap').eq(3),
+			examTarget4 = examWrap4.find('.exam_q'),
+			examBtn4 = examWrap4.find('button');
+
+	examBtn4.on('click', function(){
+		var examSample4 = [];
+		for(var i = 2; i <= 9; i++) {
+			var timesTable = [];
+			for(var j = 1; j <= 9; j++) {
+				timesTable.push(i*j);
+			}
+			examSample4.push(timesTable);
+		}
+		console.log(examSample4);
+	});
+
+	// Question 5
+	var examWrap5 = $('#container').find('.exam_wrap').eq(4),
+			examTarget5 = examWrap5.find('exam_q'),
+			examBtn5 = examWrap5.find('button'),
+			examSample5 = [];
+
+	examBtn5.on('click', function(){
+		for(var i = 0; i < 10; i++) {
+			examSample5.push(i);
+		}
+		console.log(examSample5);
+	});
+
+	// Question 6 
+	var examWrap6 = $('#container').find('.exam_wrap').eq(5),
+			examTarget6 = examWrap6.find('.exam_q'),
+			examBtn6 = examWrap6.find('button'),
+			examSample6 = [];
+
+	examBtn6.on('click', function() {
+		for(var i = 0; i < 6; i++) {
+			var randomNo6 = Math.floor((Math.random() * 6));
+			examSample6.push(randomNo6);
+		}
+		console.log(examSample6);
+	});
+
+	// Question 7
+	var examWrap7 = $('#container').find('.exam_wrap').eq(6),
+			examTarget7 = examWrap7.find('.exam_q'),
+			examBtn7 = examWrap7.find('button'),
+			examSample7 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+
+	examBtn7.on('click', function() {
+		var randomNo7 = Math.floor(Math.random()*examSample7.length);
+		examSample7.splice(randomNo7, 1);
+		console.log(examSample7);
+	});
+
+	// Question 8
+	var examWrap8 = $('#container').find('.exam_wrap').eq(7),
+			examTarget8 = examWrap8.find('.exam_q'),
+			examBtn8 = examWrap8.find('button');
+
+	examBtn8.on('click', function() {
+		var examSample8 = [];
+		for(var i = 0; i < 6; i++) {
+			var randomNo8 = Math.floor(Math.random()*6);
+			if(examSample8.indexOf(randomNo8) === -1) {
+				examSample8.push(randomNo8);
+			} else if(examSample8.length < 6) {
+				i--;
+			} else {
+				i > 6;
+			}
+		}
+		console.log(examSample8);
+	});
+});
+
+</script>
+</head>
+<body>
+<!-- wrapper [s] -->
+<div id="wrapper">
+	<!-- header [s] -->
+	<div id="header">
+	</div>
+	<!-- header [e] -->
+	<hr />
+	<!-- container [s] -->
+	<div id="container">
+		<div class="exam_wrap">
+			<h1>Q. 배열에 본인 이름을 한글자씩 담은 다음 문자열로 출력하세요.</h1>
+			<div class="exam_q">예시) ['Lee', 'Hwan'] => 'Lee Hwan'</div>
+			<button type="button">버튼</button>
+		</div>
+		<div class="exam_wrap">
+			<h1>Q. 'question' 문자열을 거꾸로 출력하세요. (for문 사용)</h1>
+			<div class="exam_q">예시) 'question' => 'noitseuq'</div>
+			<button type="button">버튼</button>
+		</div>
+		<div class="exam_wrap">
+			<h1>Q. [40, 100, 1, 5, 25, 10] 에서 가장 큰 수 순서대로 index 를 배열로 출력하세요.  (for/if문 사용)</h1>
+			<div class="exam_q">예시) [40, 100, 1, 5, 25, 10] => [1, 0, 5, 4, 2, 3]</div>
+			<button type="button">버튼</button>
+		</div>
+		<div class="exam_wrap">
+			<h1>Q. 2중 배열로 구구단을 만드세요. (for문 사용)</h1>
+			<div class="exam_q">예시) [[2,4,6...],[3,6,9...]...]</div>
+			<button type="button">버튼</button>
+		</div>
+		<div class="exam_wrap">
+			<h1>Q. 배열에 숫자 0 ~ 9까지 담아보세요. (for문 사용)</h1>
+			<div class="exam_q">예시) [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]</div>
+			<button type="button">버튼</button>
+		</div>
+		<div class="exam_wrap">
+			<h1>Q. 배열에 숫자 0 ~ 5 사이의 랜덤한 숫자를 6개 담아보세요. (for문 사용)</h1>
+			<div class="exam_q">예시) [4, 2, 3, 2, 3, 0]</div>
+			<button type="button">버튼</button>
+		</div>
+		<div class="exam_wrap">
+			<h1>Q. 배열에 숫자 0 ~ 9까지 담고, 버튼 클릭시 랜덤한 숫자를 하나씩 빼주세요.</h1>
+			<div class="exam_q">예시) [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] => [0, 1, 2, 3, 4, 5, 7, 8, 9] => [0, 1, 3, 4, 5, 7, 8, 9]</div>
+			<button type="button">버튼</button>
+		</div>
+		<div class="exam_wrap">
+			<h1>Q. 배열에 숫자 0 ~ 5 사이의 랜덤한 숫자를 중복되는 값이 없도록 6개 담아보세요. (for/if문 사용)</h1>
+			<div class="exam_q">예시) [4, 2, 3, 1, 5, 0]</div>
+			<button type="button">버튼</button>
+		</div>
+	</div>
+	<!-- container [e] -->
+	<hr />
+	<!-- footer [s] -->
+	<div id="footer">
+	</div>
+	<!-- footer [e] -->
+</div>
+<!-- wrapper [e] -->
+</body>
+</html>

@@ -93,7 +93,7 @@
     ```html
     <script>
     var myArray = ['바나나', '사과', '딸기'];
-    var myVar = myArray.push('새로운 과일'');    // 4
+    var myVar = myArray.push('새로운 과일');    // 4
     var myVar2 = myArray.join(', ');    // 바나나, 사과, 딸기, 새로운 과일
     console.log(myVar);
     </script>
