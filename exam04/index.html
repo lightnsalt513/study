@@ -64,12 +64,11 @@
             this.selectBtn = this.obj.find('.btn_app');
             this.bottleListWrap = this.obj.find('.game_area');
             this.bottleListItem = this.bottleListWrap.children();
-            this.bottleCap = this.bottleListItem.find('.gom');
-            // console.log(this.bottleListItem.length);
         },
         initOpts : function () {
             this.bearSelect = false;
             this.joinEvent = false;
+            this.noWinner = true; // set to 'true' to have no winner
         },
         bindEvents : function () {
             this.bearListInput.on('change', $.proxy(this.onClickInput, this));
@@ -78,19 +77,41 @@
         onClickInput : function (e) {
             var target = $(e.currentTarget);
             this.bearSelect = true;
+            this.currentIndex = target.closest('li').index();
         },
         onClickBtn : function (e) {
             // currentTarget browser support from IE9
-            var target = $(e.currentTarget);
             e.preventDefault();
-            this.setAlert();
-        },
-        setAlert : function () {
             if (!this.bearSelect) {
                 alert('곰을 먼저 선택해 주세요');
             } else if (this.joinEvent) {
-                alert('이벤트에 참여하였습니다.');
+                alert('이미 이벤트에 참여하였습니다.');
+            } else {
+                this.setFunc();
             }
+        },
+        setRandom : function () {
+            this.randomIndex = this.currentIndex;
+            
+            while (this.randomIndex == this.currentIndex) {
+                this.randomIndex = Math.floor(Math.random()*(this.bottleListItem.length));
+            }
+
+            this.currentIndex = this.randomIndex;
+        },
+        setFunc : function () {
+            this.joinEvent = true;
+
+            if (this.noWinner) {
+              this.setRandom();
+            }
+
+            this.bottleListItem.eq(this.currentIndex).find('.gom').animate({
+                top: '108px'
+            }, 500, $.proxy(this.setClass, this));
+        },
+        setClass : function () {
+            this.bottleListItem.eq(this.currentIndex).addClass('winlane');
         }
     };
     bearEvent.init();
