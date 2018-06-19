@@ -44,8 +44,8 @@ button::-moz-focus-inner{padding:0;border:0}
                 <p class="layer_close"><button>닫기</button></p>
             </div>
         </div>
-        <!-- <div class="btn_pos js-btn_pos b2"><button>레이어 띄우기2</button></div>
-        <div class="btn_pos js-btn_pos b3"><button>레이어 띄우기3</button></div> -->
+        <div class="btn_pos js-btn_pos b2"><button>레이어 띄우기2</button></div>
+        <div class="btn_pos js-btn_pos b3"><button>레이어 띄우기3</button></div>
     </div>
     <!-- container [e] -->
     <hr />
@@ -64,17 +64,18 @@ button::-moz-focus-inner{padding:0;border:0}
             this.setElements();
             this.bindEvents();
             this.onClickOutside();
+            this.onPressEsc();
         },
         setElements : function () {
-            var dummyFocus = '<span tabindex="0"></span>';
-
-            this.layerOpen = false;
-
             this.layerBtn = $('.js-btn_pos').find('button');
+            this.layerBtnOnFocus;
             this.layerWrap = $('.js-layer_area');
             this.layerArea = this.layerWrap.find('.layer_pos');
             this.layerCloseBtn = this.layerArea.find('.layer_close button');
+            this.layerOpenStatus = false;
+            this.escKey = 27;
 
+            var dummyFocus = '<span tabindex="0"></span>';
             this.layerArea.before(dummyFocus);
             this.layerArea.after(dummyFocus);
             this.layerAreaPrev = this.layerArea.prev();
@@ -86,37 +87,44 @@ button::-moz-focus-inner{padding:0;border:0}
             this.layerAreaNext.on('focus', $.proxy(this.changeFocusNext, this));
             this.layerAreaPrev.on('focus', $.proxy(this.changeFocusPrev, this));
         },
-        onClickOutside : function () {
-            if (this.layerOpen) {
-
+        onClickOutside : function (condition) {
+            if (condition) {
                 this.layerArea.on('clickoutside', $.proxy(this.closeLayer, this));
-                // console.log('open');
             } else {
-                console.log('close');
+                this.layerArea.off('clickoutside');
             }
         },
-        clickoutsideFunc : function () {
-            var clickoutsideTime = setTimeout(
-                $.proxy(function () {
-                    this.onClickOutside();
-            }, this), 30);
-        },
-        openLayer : function () {
-            this.layerOpen = true;
+        openLayer : function (e) {
+            this.layerBtnOnFocus = $(e.target);
+            this.layerOpenStatus = true;
             this.layerWrap.show();
             this.layerArea.attr('tabindex', 0).focus();
-            this.onClickOutside();
+            setTimeout(
+                $.proxy(function () {
+                    this.onClickOutside(true);
+            }, this), 30);
         },
         closeLayer : function () {
-            this.layerOpen = false;
+            this.layerOpenStatus = false;
             this.layerWrap.hide();
-            this.layerBtn.focus();
+            this.layerBtnOnFocus.focus();
+            setTimeout(
+                $.proxy(function () {
+                    this.onClickOutside(false);
+            }, this), 30);
         },
         changeFocusNext : function () {
             this.layerArea.focus();
         },
         changeFocusPrev : function () {
             this.layerCloseBtn.focus();
+        },
+        onPressEsc : function () {
+            $(document).on('keyup', $.proxy(function(e) {
+                if (e.keyCode == this.escKey && this.layerOpenStatus) {
+                    this.closeLayer();
+                }
+            }, this));
         }
     };
     layerPopup.init();
