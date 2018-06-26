@@ -166,7 +166,12 @@ button::-moz-focus-inner{padding:0;border:0}
             this.hashFunc();
         },
         hashFunc : function () {
-            window.location.href = "#thema" + this.currentIndex;
+            // var getHash = window.location.hash;
+            //     getHashNumber = getHash.slice(-1);
+
+            // this.currentIndex = getHashNumber - 1;
+            // this.viewChangeFunc();
+            // console.log(this.currentIndex);
         },
         onClickMenu : function (e) {
             e.preventDefault();
@@ -174,6 +179,7 @@ button::-moz-focus-inner{padding:0;border:0}
                 targetIndex = target.index();
 
             this.currentIndex = targetIndex;
+            window.location.hash = 'thema' + (this.currentIndex + 1);
             this.viewChangeFunc();
         },
         viewChangeFunc : function () {
@@ -252,8 +258,8 @@ button::-moz-focus-inner{padding:0;border:0}
             this.slideMenuItem.eq(this.oldIndex).removeClass('active');
         },
         fadeInFunc : function () {
-            this.slideContItem.eq(this.currentIndex).fadeIn(800);
-            this.slideContItem.eq(this.oldIndex).fadeOut(800);
+            this.slideContItem.eq(this.currentIndex).fadeIn(600);
+            this.slideContItem.eq(this.oldIndex).fadeOut(600);
         },
         slideFunc : function () {
             if ((this.currentIndex == 0 && this.oldIndex == this.slideContItem.length - 1) || this.currentIndex > this.oldIndex) {
