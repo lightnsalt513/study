@@ -64,7 +64,7 @@ button::-moz-focus-inner{padding:0;border:0}
         <div class="cast_box js-tab-wrap">
             <div class="cast_tab">
                 <ul>
-                    <li class="active"><a href="#thema1">테마1</a></li>
+                    <li><a href="#thema1">테마1</a></li>
                     <li><a href="#thema1">테마2</a></li>
                     <li><a href="#thema3">테마3</a></li>
                     <li><a href="#thema4">테마4</a></li>
@@ -75,7 +75,7 @@ button::-moz-focus-inner{padding:0;border:0}
                 </ul>
             </div>
             <div class="cast_cont">
-                <div id="thema1" class="cast_article active">컨텐츠1</div>
+                <div id="thema1" class="cast_article">컨텐츠1</div>
                 <div id="thema2" class="cast_article">컨텐츠2</div>
                 <div id="thema3" class="cast_article">컨텐츠3</div>
                 <div id="thema4" class="cast_article">컨텐츠4</div>
@@ -151,8 +151,12 @@ button::-moz-focus-inner{padding:0;border:0}
             this.tabTotal = this.tabControl.find('.cast_num .total');
         },
         initOpts : function () {
-            this.currentIndex = 0;
+            this.currentHash = win.location.hash;
+            this.hashTarget = this.tabContItem.filter(this.currentHash);
+            this.currentIndex = (this.hashTarget.length) ? this.hashTarget.index() : 0;
             this.oldIndex = this.currentIndex;
+            this.tabMenuItem.eq(this.currentIndex).addClass('active');
+            this.tabContItem.eq(this.currentIndex).addClass('active');
             this.tabCurrent.text(this.currentIndex + 1);
             this.tabTotal.text(this.tabContItem.length);
         },
@@ -164,14 +168,23 @@ button::-moz-focus-inner{padding:0;border:0}
         },
         onHashChange : function () {
             this.hashFunc();
+            console.log('onHashChange');
         },
         hashFunc : function () {
-            // var getHash = window.location.hash;
-            //     getHashNumber = getHash.slice(-1);
-
-            // this.currentIndex = getHashNumber - 1;
-            // this.viewChangeFunc();
-            // console.log(this.currentIndex);
+            if (currentHrefHash === this.currentIndex ) {
+                return;
+            } else if (this.oldIndex === this.currentIndex) {
+                var hashName = this.tabContItem.eq(this.currentIndex).attr('id');
+                console.log(this.currentIndex);
+                win.location.hash = hashName;
+            } else {
+                var currentHrefHash = win.location.hash.slice(-1);
+                this.currentIndex = currentHrefHash;
+                console.log(this.currentIndex);
+                var hashName = this.tabContItem.eq(this.currentIndex).attr('id');
+                win.location.hash = hashName;
+                this.oldIndex = this.currentIndex;
+            }
         },
         onClickMenu : function (e) {
             e.preventDefault();
@@ -179,8 +192,9 @@ button::-moz-focus-inner{padding:0;border:0}
                 targetIndex = target.index();
 
             this.currentIndex = targetIndex;
-            window.location.hash = 'thema' + (this.currentIndex + 1);
+            if (this.currentIndex === this.oldIndex) return;
             this.viewChangeFunc();
+            this.hashFunc();
         },
         viewChangeFunc : function () {
             this.tabMenuItem.eq(this.currentIndex).addClass('active');
