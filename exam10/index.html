@@ -151,9 +151,7 @@ button::-moz-focus-inner{padding:0;border:0}
             this.tabTotal = this.tabControl.find('.cast_num .total');
         },
         initOpts : function () {
-            this.currentHash = win.location.hash;
-            this.hashTarget = this.tabContItem.filter(this.currentHash);
-            this.currentIndex = (this.hashTarget.length) ? this.hashTarget.index() : 0;
+            this.hashFunc();
             this.oldIndex = this.currentIndex;
             this.tabMenuItem.eq(this.currentIndex).addClass('active');
             this.tabContItem.eq(this.currentIndex).addClass('active');
@@ -167,24 +165,27 @@ button::-moz-focus-inner{padding:0;border:0}
             $(window).on('hashchange', $.proxy(this.onHashChange, this));
         },
         onHashChange : function () {
-            this.hashFunc();
-            console.log('onHashChange');
+            var winHash = win.location.hash;
+            if (this.currentHash === winHash) {
+                return;
+            } else {
+                this.hashFunc();
+                this.viewChangeFunc();
+            }
+            console.log('hashFunc function');
         },
         hashFunc : function () {
-            if (currentHrefHash === this.currentIndex ) {
-                return;
-            } else if (this.oldIndex === this.currentIndex) {
-                var hashName = this.tabContItem.eq(this.currentIndex).attr('id');
-                console.log(this.currentIndex);
-                win.location.hash = hashName;
-            } else {
-                var currentHrefHash = win.location.hash.slice(-1);
-                this.currentIndex = currentHrefHash;
-                console.log(this.currentIndex);
-                var hashName = this.tabContItem.eq(this.currentIndex).attr('id');
-                win.location.hash = hashName;
-                this.oldIndex = this.currentIndex;
+            this.currentHash = win.location.hash;
+            this.hashTarget = this.tabContItem.filter(this.currentHash);
+            this.currentIndex = (this.hashTarget.length) ? this.hashTarget.index() : 0;
+            if (this.currentIndex === 0 && this.currentHash.match('#')) {
+                this.assignHash();
             }
+        },
+        assignHash : function () {
+            var hashName = this.tabContItem.eq(this.currentIndex).attr('id');
+            this.currentHash = '#' + hashName;
+            win.location.hash = this.currentHash;
         },
         onClickMenu : function (e) {
             e.preventDefault();
@@ -193,14 +194,14 @@ button::-moz-focus-inner{padding:0;border:0}
 
             this.currentIndex = targetIndex;
             if (this.currentIndex === this.oldIndex) return;
+            this.assignHash();
             this.viewChangeFunc();
-            this.hashFunc();
         },
         viewChangeFunc : function () {
-            this.tabMenuItem.eq(this.currentIndex).addClass('active');
-            this.tabContItem.eq(this.currentIndex).addClass('active');
             this.tabMenuItem.eq(this.oldIndex).removeClass('active');
             this.tabContItem.eq(this.oldIndex).removeClass('active');
+            this.tabMenuItem.eq(this.currentIndex).addClass('active');
+            this.tabContItem.eq(this.currentIndex).addClass('active');
             this.tabCurrent.text(this.currentIndex + 1);
             this.oldIndex = this.currentIndex;
         },
@@ -210,6 +211,7 @@ button::-moz-focus-inner{padding:0;border:0}
             } else {
                 this.currentIndex -= 1;
             }
+            this.assignHash();
             this.viewChangeFunc();
         },
         onClickNext : function () {
@@ -218,6 +220,7 @@ button::-moz-focus-inner{padding:0;border:0}
             } else {
                 this.currentIndex += 1;
             }
+            this.assignHash();
             this.viewChangeFunc();
         }
     };
@@ -276,10 +279,10 @@ button::-moz-focus-inner{padding:0;border:0}
             this.slideContItem.eq(this.oldIndex).fadeOut(600);
         },
         slideFunc : function () {
-            if ((this.currentIndex == 0 && this.oldIndex == this.slideContItem.length - 1) || this.currentIndex > this.oldIndex) {
+            if ((this.currentIndex == 0 && this.oldIndex == this.slideContItem.length - 1) || (this.currentIndex > this.oldIndex && !(this.currentIndex == this.slideContItem.length - 1 && this.oldIndex == 0))) {
                 this.slideContItem.eq(this.currentIndex).css('left', '100%').show().animate({'left': 0});
                 this.slideContItem.eq(this.oldIndex).css('left', 0).animate({'left': '-100%'});
-            } else if ((this.currentIndex == this.slideContItem.length - 1 && this.oldIndex == 0) || this.currentIndex < this.oldIndex) {
+            } else {
                 this.slideContItem.eq(this.currentIndex).css('left', '-100%').show().animate({'left': 0});
                 this.slideContItem.eq(this.oldIndex).css('left', 0).animate({'left': '100%'});
             }

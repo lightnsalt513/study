@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no">
+<title>List Expand</title>
+<style>
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,p,table,th,td,form,fieldset,legend,textarea,input,select,textarea,button{margin:0;padding:0}
+html,body{height:100%}
+body{}
+h1,h2,h3,h4,h5,h6{font-weight:normal}
+fieldset,li,img{border:0;vertical-align:top}
+ul,ol{list-style:none}
+button{overflow:visible;border:0;background-color:transparent;cursor:pointer}
+button::-moz-focus-inner{padding:0;border:0}
+address,caption,em{font-style:normal}
+a,a:focus,a:active,a:hover{text-decoration:none;color:#333}
+table{border-collapse:collapse;border-spacing:0}
+hr{display:none}
+.blind,legend{overflow:hidden;position:absolute;top:0;left:0;width:1px;height:1px;font-size:1px;line-height:100px;white-space:nowrap}
+.s-toggle-layer{width:300px}
+.s-toggle-list a{display:block;position:relative;padding:15px;background:#000;color:#fff;text-decoration: none}
+.s-toggle-content{display:none;padding:15px;background:#f1f1f1;}
+.s-ico-toggle{position:absolute;top:50%;right:15px;width:10px;height:10px;margin-top:-5px;}
+.s-ico-toggle:before{position:absolute;top:50%;left:0;width:10px;height:2px;background:#fff;margin-top:-1px;content:'';}
+.s-ico-toggle:after{position:absolute;top:0;left:50%;width:2px;height:10px;background:#fff;margin-left:-1px;content:'';}
+.s-toggle-list.active .s-ico-toggle:after{display:none;}
+</style>
+</head>
+<body>
+<!-- wrapper [s] -->
+<div id="wrap">
+    <div class="s-toggle-layer">
+        <ul>
+        <!-- [D] active 시 .active 추가, aria-expanded="true"로 변경 -->
+        <li class="s-toggle-list" aria-expanded="true" data-global-text='{
+                "Expand" : "열림",
+                "Collapse" : "닫힘"
+            }'>
+            <a href="#list1" class="s-toggler-title">
+                <em>title</em>
+                <span class="s-ico-toggle">
+                    <span class="blind">열림</span>
+                </span>
+            </a>
+            <div class="s-toggle-content" id="list1">
+                @content
+            </div>
+        </li>
+        <li class="s-toggle-list" aria-expanded="false">
+            <a href="#list2" class="s-toggler-title">
+                <em>title</em>
+                <span class="s-ico-toggle">
+                    <span class="blind">열림</span>
+                </span>
+            </a>
+            <div class="s-toggle-content" id="list2">
+                @content
+            </div>
+        </li>
+        <li class="s-toggle-list" aria-expanded="false">
+            <a href="#list3" class="s-toggler-title">
+                <em>title</em>
+                <span class="s-ico-toggle">
+                    <span class="blind">열림</span>
+                </span>
+            </a>
+            <div class="s-toggle-content" id="list3">
+                @content
+            </div>
+        </li>
+        </ul>
+    </div>
+</div>
+<!-- wrapper [e] -->
+
+<script src="https://code.jquery.com/jquery-latest.js"></script>
+<script>
+(function (win, $, doc) {
+    var myAccordion= {
+        init : function () {
+            this.setElements();
+            this.initOpts();
+            this.initLayout();
+            this.bindEvents();
+        },
+        setElements : function () {
+            this.toggleWrap = $('.s-toggle-layer');
+            this.toggleList = this.toggleWrap.find('.s-toggle-list');
+            this.toggleBtn = this.toggleList.find('.s-toggler-title');
+            this.toggleBtnText = this.toggleBtn.find('.s-ico-toggle .blind');
+            this.toggleCont = this.toggleList.find('.s-toggle-content');
+        },
+        initOpts : function () {
+            this.oldIndex;       
+            this.accessTextActive = this.toggleList.data('global-text').Expand;
+            this.accessTextClose = this.toggleList.data('global-text').Collapse;
+        },
+        initLayout : function () {
+            this.toggleCont.hide();
+            this.toggleList.attr('aria-expanded', false);
+            this.toggleBtnText.text(this.accessTextClose);
+            this.hashFunc();
+            // this.slideFunc();
+            // this.toggleList.eq(this.currentIndex).addClass('active').find(this.toggleCont).slideDown(250);
+            // this.toggleList.eq(this.currentIndex).attr('aria-expanded', true).find(this.toggleBtnText).text(this.accessTextActive);
+        },
+        bindEvents : function () {
+            this.toggleList.on('click', this.toggleBtn, $.proxy(this.onClickFunc, this)); // anochor에 on클릭 이벤트를 바로 주었을때 delegateTarget 먹지 않았음. Why?
+            $(window).on('hashchange', $.proxy(this.onHashChange, this));
+        },
+        onHashChange : function () {
+            var winHash = win.location.hash;
+            if (this.currentHash === winHash) {
+                return;
+            } else {
+                this.hashFunc();
+                this.slideFunc();
+            }
+            console.log('hashFunc function');
+        },
+        hashFunc : function () {
+            this.currentHash = win.location.hash;
+            this.hashTarget = this.toggleCont.filter(this.currentHash);
+            this.currentIndex = (this.hashTarget.parent().length) ? this.hashTarget.parent().index() : 0;
+            if (this.currentIndex === 0 && this.currentHash.match('#')) {
+                this.assignHash();
+            }
+        },
+        assignHash : function () {
+            var hashName = this.toggleList.eq(this.currentIndex).find(this.toggleBtn).attr('href');
+            this.currentHash = hashName;
+            win.location.hash = this.currentHash;
+        },
+        onClickFunc : function (e) {
+            e.preventDefault();
+            var target = $(e.delegateTarget),
+                targetIndex = target.index();
+
+            this.currentIndex = targetIndex;            
+            this.assignHash();
+            this.slideFunc();
+        },
+        slideFunc : function () {
+            var activeList = this.toggleList.eq(this.currentIndex);
+            var notActiveList = this.toggleList.eq(this.oldIndex);
+
+            if (!activeList.hasClass('active')) {
+                activeList.addClass('active').find(this.toggleCont).slideDown(250);
+                activeList.attr('aria-expanded', true).find(this.toggleBtnText).text(this.accessTextActive);
+            } else {
+                activeList.removeClass('active').find(this.toggleCont).slideUp(250); 
+                activeList.attr('aria-expanded', false).find(this.toggleBtnText).text(this.accessTextClose);
+            }
+
+            if (this.oldIndex !== this.currentIndex) {
+                notActiveList.removeClass('active').find(this.toggleCont).slideUp(250); 
+                notActiveList.attr('aria-expanded', false).find(this.toggleBtnText).text(this.accessTextClose);
+            }
+
+            this.oldIndex = this.currentIndex;
+        }
+    }
+    myAccordion.init();
+})(window, window.jQuery, window.document);
+</script>
+</body>
+</html>
