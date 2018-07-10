@@ -101,9 +101,9 @@ hr{display:none}
             this.toggleList.attr('aria-expanded', false);
             this.toggleBtnText.text(this.accessTextClose);
             this.hashFunc();
-            // this.slideFunc();
-            // this.toggleList.eq(this.currentIndex).addClass('active').find(this.toggleCont).slideDown(250);
-            // this.toggleList.eq(this.currentIndex).attr('aria-expanded', true).find(this.toggleBtnText).text(this.accessTextActive);
+            if (this.currentHash.match('#')) {
+                this.slideFunc();
+            }
         },
         bindEvents : function () {
             this.toggleList.on('click', this.toggleBtn, $.proxy(this.onClickFunc, this)); // anochor에 on클릭 이벤트를 바로 주었을때 delegateTarget 먹지 않았음. Why?
