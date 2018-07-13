@@ -106,7 +106,7 @@ hr{display:none}
             }
         },
         bindEvents : function () {
-            this.toggleList.on('click', this.toggleBtn, $.proxy(this.onClickFunc, this)); // anochor에 on클릭 이벤트를 바로 주었을때 delegateTarget 먹지 않았음. Why?
+            this.toggleList.on('click', this.toggleBtn, $.proxy(this.onClickFunc, this));
             $(window).on('hashchange', $.proxy(this.onHashChange, this));
         },
         onHashChange : function () {
