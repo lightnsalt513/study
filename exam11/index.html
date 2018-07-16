@@ -86,7 +86,7 @@ p{margin-bottom:30px;padding-bottom:10px;border-bottom:2px solid #da0707;font-si
                 <span class="rdo_box"></span>
                 <label for="radio3">라디오1-1</label>
             </span>
-            <span class="radio_box">
+            <span class="radio_box chk_active">
                 <input type="radio" id="radio4" name="radio2" class="ipt_rdo">
                 <span class="rdo_box"></span>
                 <label for="radio4">라디오2-1</label>
@@ -159,6 +159,7 @@ p{margin-bottom:30px;padding-bottom:10px;border-bottom:2px solid #da0707;font-si
         },
         initLayout : function () {
             this.chkBoxInp.filter(':checked').closest(this.chkBoxArea).addClass(this.opts.activeClass);
+            this.chkBoxInp.not(':checked').closest(this.chkBoxArea).removeClass(this.opts.activeClass);
         },
         bindEvents : function () {
             this.chkBoxInp.on('change', $.proxy(this.onChange, this));
@@ -198,6 +199,7 @@ p{margin-bottom:30px;padding-bottom:10px;border-bottom:2px solid #da0707;font-si
         },
         initLayout : function () {
             this.rdoBoxInp.filter(':checked').closest(this.rdoBoxArea).addClass(this.opts.activeClass);
+            this.rdoBoxInp.not(':checked').closest(this.rdoBoxArea).removeClass(this.opts.activeClass);
         },
         bindEvents : function () {
             this.rdoBoxInp.on('change', $.proxy(this.onChange, this));
