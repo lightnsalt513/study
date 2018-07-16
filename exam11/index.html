@@ -165,7 +165,7 @@ p{margin-bottom:30px;padding-bottom:10px;border-bottom:2px solid #da0707;font-si
             this.chkBoxInp.on('change', $.proxy(this.onChange, this));
         },
         onChange : function (e) {
-            var target = $(e.target);
+            var target = $(e.target),
                 targetChecked = target.prop('checked');
             if (targetChecked) {
                 target.closest(this.chkBoxArea).addClass(this.opts.activeClass);  
