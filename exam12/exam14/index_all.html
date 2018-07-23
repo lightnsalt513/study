@@ -84,7 +84,7 @@ ins{text-decoration:none}
             <div class="quick_menu">
                 <strong class="blind">quick menu</strong>
                 <ul class="quick_list">
-                <li><a href="#none" class="requirements active"><span class="sp">01 REQUIREMENTS</span></a></li>
+                <li><a href="#none" class="requirements"><span class="sp">01 REQUIREMENTS</span></a></li>
                 <li><a href="#none" class="benefits"><span class="sp">02 BENEFITS</span></a></li>
                 <li><a href="#none" class="apply"><span class="sp">03 APPLY</span></a></li>
                 <li><a href="#none" class="btn_top"><span class="sp">Go to top</span></a></li>
@@ -95,6 +95,7 @@ ins{text-decoration:none}
             <div class="section type3"></div>
             <div class="section type4"></div>
             <div class="section type5"></div>
+            <div class="section" style="height:2000px;background:red"></div>
         </div>
     </div>
     <!-- container [e] -->
@@ -112,13 +113,19 @@ ins{text-decoration:none}
             container : '#content',
             menuContainer : '.quick_menu',
             menuList : '.quick_list',
+            menuItemWrap : '> li',
+            menuItem : '> a',
             menuAttachElement : '.section',
             btnTop : '.btn_top',
             stickyClass : 'is-fixed',
-            activeClass : 'active'
+            activeClass : 'active',
+            animateSpeed : 300
         };
         this.opts = $.extend(defParams, {});
-        if (!(this.obj = $(this.opts.container)).length) return;
+        if (!(this.obj = $(this.opts.container)).length) {
+            alert(this.opts.container + ' does not exist')
+            return;
+        };
         this.init();
     };
 
@@ -132,8 +139,8 @@ ins{text-decoration:none}
         setElements : function () {
             this.stickyObj = this.obj.find(this.opts.menuContainer);
             this.stickyMenuList = this.stickyObj.find(this.opts.menuList);
-            this.stickyMenuItemWrap = this.stickyMenuList.find('> li');
-            this.stickyMenuItem = this.stickyMenuItemWrap.find('> a');
+            this.stickyMenuItemWrap = this.stickyMenuList.find(this.opts.menuItemWrap);
+            this.stickyMenuItem = this.stickyMenuItemWrap.find(this.opts.menuItem);
             this.stickyAttachElement = this.obj.find(this.opts.menuAttachElement);
             this.btnTopClass = this.opts.btnTop;
             this.btnTop = this.stickyMenuItem.filter(this.btnTopClass);
@@ -141,6 +148,7 @@ ins{text-decoration:none}
             this.activeClass = this.opts.activeClass;
         },
         initOpts : function () {
+            this.animateSpeed = this.opts.animateSpeed;
             this.arrMenuIndex = [];
             this.arrContIndex = [];
             this.arrOffset = [];
@@ -153,6 +161,7 @@ ins{text-decoration:none}
             this.createContArray();
             this.checkOffsetPosition();
             this.stickyFunc();
+            this.onScrollEndFunc();
         },
         createMenuArray : function () {
             for (var i = 0, max = this.stickyMenuItemWrap.length; i < max; i++) {
@@ -190,6 +199,15 @@ ins{text-decoration:none}
             } else {
                 this.stickyObj.removeClass(this.stickyClass);
             }
+
+            // 아래는 클래스 존재 여부를 확인하여 stickyClass 추가/제거하는 방안입니다.
+            // 어떤것이 더 효율적인가요?
+            // var hasStickyClass = this.stickyObj.hasClass(this.stickyClass);
+            // if (this.scrollTop >= this.arrOffset[0]) {
+            //     hasStickyClass == false ? this.stickyObj.addClass(this.stickyClass) : '';
+            // } else {
+            //     hasStickyClass == true ? this.stickyObj.removeClass(this.stickyClass) : '';
+            // } 
         },
         onScrollEndFunc : function () {
             for (var i = 0, max = this.arrMenuIndex.length; i < max; i++) {
@@ -197,11 +215,24 @@ ins{text-decoration:none}
                 if (this.scrollTop >= this.arrOffset[i] && this.scrollTop < this.arrOffset[i + 1]) {
                     targetMenu.addClass(this.activeClass);
                 } else if (this.scrollTop >= this.arrOffset[i] && i === this.arrMenuIndex.length-1) {
-                    targetMenu.addClass(this.activeClass);
+                    var targetContHeight = this.stickyAttachElement.eq(this.arrContIndex[i]).height(),
+                        targetLastOffset = targetContHeight + this.arrOffset[i];
+                    
+                    if (this.scrollTop >= targetLastOffset) {
+                        targetMenu.removeClass(this.activeClass);
+                    } else {
+                        targetMenu.addClass(this.activeClass);
+                    }
                 } else {
                     targetMenu.removeClass(this.activeClass);
                 }
             }
+
+            //스크롤이 최하단으로 내려갔을 때 active 클래스 제거
+            if(this.scrollTop == $(document).height() - $(win).height()){
+                this.stickyMenuItem.removeClass(this.activeClass);
+            }
+            this.topClassFunc();
         },
         onClickMenuFunc : function (e) {
             var target = $(e.currentTarget);
@@ -216,13 +247,21 @@ ins{text-decoration:none}
 
                 $('html, body').animate({
                     scrollTop : targetOffset
-                }, 400);
+                }, this.animateSpeed);
             }
         },
         goTopFunc : function () {
             $('html, body').animate({
                 scrollTop : 0
-            }, 400);
+            }, this.animateSpeed);
+        },
+        topClassFunc : function () {
+            //btn_top 메뉴 active 클래스 토글
+            if (this.scrollTop === 0) {
+                this.stickyMenuItem.filter(this.btnTopClass).addClass(this.activeClass);
+            } else {
+                this.stickyMenuItem.filter(this.btnTopClass).removeClass(this.activeClass);
+            }
         }
     };
 
