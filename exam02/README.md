@@ -73,7 +73,7 @@
     </script>
     ```
 
-* Array.splice() : 배열에서 선택된 요소를 추가 또는 제거하여 해당 요소를 반환함\
+* Array.splice() : 배열에서 선택된 요소를 추가 또는 제거하여 해당 요소를 반환하며 적용된 배열의 값 또한 변경함\
                    ㄴ array.splice(index, howmany, item1, ....., itemX)\
                    ㄴ index : 필수; 추가/제거할 요소의 위치 (배열의 마지막 순서부터 지정하고자 하는 경우 음수값 사용)\
                    ㄴ howmany : 선택적; 제거될 요소의 개수\
@@ -83,8 +83,9 @@
     var myArray = ['바나나', '사과', '파인애플', '복숭아', '딸기'];
     var myVar = myArray.splice(3).join(', ');      // 복숭아, 딸기 (4번째부터 끝까지 제거)
     var myVar2 = myArray.splice(2, 1).join(', ');      // 파인애플 (3번째부터 요소 1개 제거)
-    var myVar3 = myArray.splice(2, 2, 'Kiwi', 'Lemon');      // !!!!확인필요
-    console.log(myVar);
+    
+    myArray.splice(1, 0, 'Kiwi', 'Lemon');      
+    console.log(myArray);                               // ['바나나', 'Kiwi', 'Lemon', '사과']
     </script>
     ```
 

@@ -145,12 +145,15 @@ ins{text-decoration:none}
             this.arrContIndex = [];
             this.arrOffset = [];
             this.stickyAttachIndex = 1;
+            this.scrollEndTime;
         },
         initLayout : function () {
             this.stickyMenuItem.removeClass(this.activeClass);
             this.createMenuArray();
             this.createContArray();
             this.checkOffsetPosition();
+            this.stickyFunc();
+
         },
         createMenuArray : function () {
             for (var i = 0, max = this.stickyMenuItemWrap.length; i < max; i++) {
@@ -158,13 +161,11 @@ ins{text-decoration:none}
                     this.arrMenuIndex.push(i);
                 }
             }
-            console.log(this.arrMenuIndex);
         },
         createContArray : function () {
             for (var i = this.stickyAttachIndex, max = this.arrMenuIndex.length; i <= max; i++) {
                 this.arrContIndex.push(i);
             }
-            console.log(this.arrContIndex);
         },
         checkOffsetPosition : function () {
             for (var i = 0, max = this.arrMenuIndex.length; i < max; i++) {
@@ -177,21 +178,30 @@ ins{text-decoration:none}
             this.stickyMenuItem.on('click', $.proxy(this.onClickMenuFunc, this));
         },
         onScrollFunc : function () {
-            var scrollTop = $(win).scrollTop();
-            if (scrollTop >= this.arrOffset[0]) {
+            this.scrollTop = $(win).scrollTop();
+
+            this.stickyFunc();
+            clearTimeout(this.scrollEndTime);
+            this.scrollEndTime = setTimeout($.proxy(this.onScrollEndFunc, this), 150);
+        },
+        stickyFunc : function () {
+            this.scrollTop = $(win).scrollTop();
+            if (this.scrollTop >= this.arrOffset[0]) {
                 this.stickyObj.addClass(this.stickyClass);
-                for (var i = 0, max = this.arrMenuIndex.length; i < max; i++) {
-                    var targetMenu = this.stickyMenuItem.eq(this.arrMenuIndex[i]);
-                    if (scrollTop >= this.arrOffset[i] && i === this.arrMenuIndex.length-1) {
-                        targetMenu.addClass(this.activeClass);
-                    } else if (scrollTop >= this.arrOffset[i] && scrollTop < this.arrOffset[i + 1]) {
-                        targetMenu.addClass(this.activeClass);
-                    } else {
-                        targetMenu.removeClass(this.activeClass);
-                    }
-                }
             } else {
                 this.stickyObj.removeClass(this.stickyClass);
+            }
+        },
+        onScrollEndFunc : function () {
+            for (var i = 0, max = this.arrMenuIndex.length; i < max; i++) {
+                var targetMenu = this.stickyMenuItem.eq(this.arrMenuIndex[i]);
+                if (this.scrollTop >= this.arrOffset[i] && this.scrollTop < this.arrOffset[i + 1]) {
+                    targetMenu.addClass(this.activeClass);
+                } else if (this.scrollTop >= this.arrOffset[i] && i === this.arrMenuIndex.length-1) {
+                    targetMenu.addClass(this.activeClass);
+                } else {
+                    targetMenu.removeClass(this.activeClass);
+                }
             }
         },
         onClickMenuFunc : function (e) {
@@ -201,7 +211,13 @@ ins{text-decoration:none}
             if (target.hasClass(this.btnTopClass.slice(1))) {
                 this.goTopFunc();
             } else {
-                target.attr('class')
+                var targetMenuIndx = target.parent().index(),
+                    targetArrIndx = this.arrMenuIndex.indexOf(targetMenuIndx),
+                    targetOffset = this.arrOffset[targetMenuIndx];
+
+                $('html, body').animate({
+                    scrollTop : targetOffset
+                }, 400);
             }
         },
         goTopFunc : function () {
