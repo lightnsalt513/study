@@ -104,6 +104,7 @@
 </div>
 <!-- wrapper [e] -->
 <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<script src="js/jquery.ba-outside-events.min.js"></script>
 <script>
 (function (win, $) {
     'use strict';
@@ -126,11 +127,12 @@
     gnbObj.prototype = {
         init : function () {
             this.setElements();
-            this.initLayout();
+            this.checkResponsive();
+            this.initOpts();
+            this.resizeFunc();
             this.bindEvents();
         },
         setElements : function () {
-            this.gnbWrap = this.obj;
             this.gnbList = this.obj.find(this.opts.menuList);
             this.gnbItem = this.gnbList.find('> li');
             this.gnbLink = this.gnbItem.find('.btn');
@@ -138,55 +140,90 @@
             this.openBtn = $(this.opts.gnbOpenBtn);
             this.closeBtn = this.obj.find(this.opts.gnbCloseBtn);
         },
-        initLayout : function () {
-            this.resizeFunc();
+        initOpts: function () {
+            this.gnbOriginalLeft = this.obj.css('left');
+            this.gnbOriginalRight = this.obj.css('right');
+        },
+        checkResponsive : function () {
+            this.isSupportTransform = true;
         },
         bindEvents : function () {
             $(win).on('resize', $.proxy(this.resizeFunc, this));
+
+            if (this.isSupportTransform) {
+                this.openBtn.on('click', $.proxy(this.openMenu, this));  
+                this.closeBtn.on('click', $.proxy(this.closeMenu, this));
+            }
         },
         resizeFunc : function () {
             this.winWidth = $(win).width();
 
+            clearTimeout(this.endFuncTimeout);
+            this.endFuncTimeout = setTimeout($.proxy(this.resizeEndFunc, this), 200);
+        },
+        resizeEndFunc : function () {
             if (this.winWidth > this.opts.breakPoint) {
-                this.opts.viewType = 'PC';
-                this.onHoverMenu(this.opts.viewType);
-            } else {
-                this.opts.viewType = 'MO';
-                this.gnbOriginalLeft = this.gnbWrap.css('left');
-                this.gnbOriginalRight = this.gnbWrap.css('right');
+                if (this.opts.viewType != 'PC' && this.isSupportTransform) {
+                    this.opts.viewType = 'PC';
 
-                this.onHoverMenu('MO');
-                this.onClickOpen();
-                this.onClickClose();
+                    this.subMenu.hide();
+                    this.closeMenu();
+                    this.onHoverMenu(true);
+                }
+            } else {
+                if (this.opts.viewType != 'MO' && this.isSupportTransform) {
+                    this.opts.viewType = 'MO';
+
+                    this.subMenu.show();
+                    this.onHoverMenu(false);
+                }
             }
         },
         onHoverMenu : function (type) {
-            if (type == 'PC') {
-                this.gnbLink.parent().on('mouseenter mouseleave', $.proxy(function(e) {
-                    var target = $(e.currentTarget);
-
-                    target.find(this.subMenu).toggle();
-
-                }, this));
-            } else if (type == 'MO') {
-                this.gnbLink.parent().off('mouseenter mouseleave');
+            if (type) {
+                this.gnbItem.on('mouseenter mouseleave focusin focusout', $.proxy(this.hoverMenuFunc, this));
+                console.log('PC');
+            } else {
+                this.gnbItem.off('mouseenter mouseleave focusin focusout');
+                console.log('MO');
             }
         },
-        onClickOpen : function () {
-            this.openBtn.on('click', $.proxy(function() {
-                this.gnbWrap.animate({
-                    right : 'auto',
-                    left : '0'
-                }, 150);
-            }, this));  
+        hoverMenuFunc : function (e) {
+            var target = $(e.currentTarget),
+                targetSubmenu = target.find(this.subMenu);
+
+            if (e.type == 'mouseenter' || e.type == 'focusin') {
+                targetSubmenu.show();
+            } else if (e.type == 'mouseleave') {
+                targetSubmenu.hide();
+            } else if (e.type == 'focusout') {
+                // 고민중....
+            }
         },
-        onClickClose : function () {
-            this.closeBtn.on('click', $.proxy(function() {
-                this.gnbWrap.animate({
-                    right : this.gnbOriginalRight,
-                    left : this.gnbOriginalLeft
-                }, 150);
-            }, this));
+        onClickOutside : function (condition) {
+            if (condition) {
+                this.obj.on('clickoutside', $.proxy(this.closeMenu, this));
+            } else {
+                this.obj.off('clickoutside');
+            }
+        },
+        openMenu : function () {
+            this.obj.css({
+                right : 'auto',
+                left : '0'
+            });
+            setTimeout($.proxy(function () {
+                this.onClickOutside(true);
+            }, this), 30);
+        },
+        closeMenu : function () {
+            this.obj.css({
+                right : '100%',
+                left : 'auto'
+            });
+            setTimeout($.proxy(function () {
+                this.onClickOutside(false);
+            }, this), 30);
         }
     }
 
@@ -194,7 +231,6 @@
         new gnbObj();
     });
     
-
 })(window, window.jQuery);
 </script>
 </body>
