@@ -1,7 +1,7 @@
 (function (win, $, doc) {
     'use strict';  // var 없이 선언되는 경우 전역변수가 됨 기존 전역변수를 덮어쓰는 변수 선언을 방지
     win.smg = win.smg || {}; // window 객체에 smg 속성이 없는 경우 새로운 객체 속성으로 선언 (이하 구문 동일 방식)
-    win.smg.support = win.smg.support || {}; /
+    win.smg.support = win.smg.support || {};
     win.smg.support.common = win.smg.support.common || {}; 
 
     var CST_EVENT = win.smg.support.common.customEvent, // 변수 저장
