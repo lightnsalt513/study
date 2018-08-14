@@ -129,9 +129,11 @@
     		selectBtn : '.support-select__placeholder',
     		selectPlaceholder : '.js-align-placeholder > span',
     		selectList : '.support-select__options',
+            selectAria : 'aria-hidden',
             openClass : 'is-opened',
     		selectItem : 'li > a',
-    		accessibilityElem : '.blind'
+    		accessibilityElem : '.blind',
+            slideSpeed : 120
     	}
     	this.opts = UTIL.def(defParams, (args || {}));
     	if (!(this.obj = $(this.opts.container)).length) return;
@@ -165,7 +167,8 @@
     	},
     	initLayout : function () {
     		this.accessibilityElem.text(this.globalText.expand);
-    		this.selectList.hide();
+            this.selectList.hide();
+    		this.selectList.attr('aria-hidden', true);
     	},
     	bindEvents : function () {
             this.searchInput.on('focusin focusout', $.proxy(this.inputFocusFunc, this));
@@ -213,13 +216,15 @@
             }
         },
         openSelect : function () {
-			this.selectList.slideDown(120);
+			this.selectList.slideDown(this.opts.slideSpeed);
+            this.selectList.attr('aria-hidden', false);
             this.selectWrap.addClass(this.opts.openClass);
     		this.accessibilityElem.text(this.globalText.collapse);
                 this.clickOutsideBindEvent(true);
         },
         closeSelect : function () {
-			this.selectList.slideUp(120);
+			this.selectList.slideUp(this.opts.slideSpeed);
+            this.selectList.attr('aria-hidden', true);
             this.selectWrap.removeClass(this.opts.openClass);
     		this.accessibilityElem.text(this.globalText.expand);
             this.clickOutsideBindEvent(false);
@@ -236,14 +241,18 @@
             filterListWrap : '.manual-download-filter-new__list-wrap',
             filterListArea : '.manual-download-filter-new__list',
             filterToggler : '.manual-download-filter-new__list-title',
+            accessibilityElem : '.blind',
+            filterList : '.manual-download-filter-new__list-items',
             filterInputWrap : '.support-checkbox',
             filterInput : 'input[type="checkbox"]',
             activeClass : 'filter-active',
+            checkedClass : 'is-checked',
             contentList : '.manual-download-filter-new__content-list',
             contentItem : 'li',
             contentCta : '.manual-download-filter-new__content-cta',
             contentCtaBtn : '.s-btn-text',
             showClass : 'is-show',
+            slideSpeed : 150,
             showType : true,
             listNum : null
         }
@@ -265,6 +274,10 @@
             this.filterListWrap = this.filterWrap.find(this.opts.filterListWrap);
             this.filterListArea = this.filterListWrap.find(this.opts.filterListArea);
             this.filterToggler = this.filterListWrap.find(this.opts.filterToggler);
+            this.accessibilityElem = this.filterToggler.find(this.opts.accessibilityElem);
+            this.filterList = this.filterListArea.find(this.opts.filterList);
+            this.filterInputWrap = this.filterListArea.find(this.opts.filterInputWrap);
+            this.filterInput = this.filterInputWrap.find(this.opts.filterInput);
 
             this.contentList = this.obj.find(this.opts.contentList);
             this.contentItem = this.contentList.find(this.opts.contentItem);
@@ -274,11 +287,13 @@
         initOpts : function () {
             var globalText = this.filterParent.data('global-text');
             this.globalText = {
-                Collapse : (globalText && globalText.Collapse) ? globalText.Collapse : '',
-                Expand : (globalText && globalText.Expand) ? globalText.Expand : '',
-                showMore : (globalText && globalText.showMore) ? globalText.showMore : '',
-                showLess : (globalText && globalText.showLess) ? globalText.showLess : '' 
-            }
+                Collapse : (globalText && globalText.Collapse) ? $.trim(globalText.Collapse) : '',
+                Expand : (globalText && globalText.Expand) ? $.trim(globalText.Expand) : '',
+                showMore : (globalText && globalText.showMore) ? $.trim(globalText.showMore) : '',
+                showLess : (globalText && globalText.showLess) ? $.trim(globalText.showLess) : '' 
+            };
+            this.filterInput.filter(':checked').closest(this.filterInputWrap).addClass(this.opts.checkedClass);
+            // this.filterInput.filter(':checked').closest(this.filterInputWrap).addClass(this.opts.checkedClass);
             this.opts.listNum = this.contentList.data('view-list');
         },
         initLayout : function () {
@@ -290,7 +305,36 @@
             this.viewContentFunc();
         },
         bindEvents : function () {
-            this.contentCta.on('click', $.proxy(this.onClickMore, this));
+            this.filterToggler.on('click', $.proxy(this.onClickFilterToggler, this));
+            this.filterInput.on('change', $.proxy(this.onChangeFilter, this));
+            this.contentCtaBtn.on('click', $.proxy(this.onClickMore, this));
+        },
+        onClickFilterToggler : function (e) {
+            var target = $(e.currentTarget),
+                targetAccess = target.find(this.accessibilityElem),
+                targetListArea = target.closest(this.filterListArea),
+                targetList = targetListArea.find(this.filterList);
+
+            e.preventDefault();
+            if (!targetListArea.hasClass(this.opts.activeClass)) {
+                targetListArea.addClass(this.opts.activeClass);
+                targetAccess.text(this.globalText.Collapse);
+                targetList.slideDown(this.opts.slideSpeed);
+            } else {
+                targetListArea.removeClass(this.opts.activeClass);
+                targetAccess.text(this.globalText.Expand);
+                targetList.slideUp(this.opts.slideSpeed);
+            }
+        },
+        onChangeFilter : function (e) {
+            var target = $(e.currentTarget),
+                targetWrap = target.closest(this.filterInputWrap);
+
+            if (target.prop('checked')) {
+                targetWrap.addClass(this.opts.checkedClass);
+            } else {
+                targetWrap.removeClass(this.opts.checkedClass);
+            }
         },
         viewContentFunc : function () {
             for (var i = 0, max = this.contentItem.length; i < max; i++) {
@@ -302,16 +346,18 @@
             }
         },
         onClickMore : function (e) {
+            var target = $(e.currentTarget);
+
             e.preventDefault();
             if (this.opts.showType) {
                 this.opts.showType = false;
-                this.contentCtaBtn.removeClass('s-ico-down').addClass('s-ico-up');
-                this.contentCtaBtn.text(this.globalText.showLess);
+                target.removeClass('s-ico-down').addClass('s-ico-up');
+                target.text(this.globalText.showLess);
                 this.contentItem.addClass(this.opts.showClass);
             } else {
                 this.opts.showType = true;
-                this.contentCtaBtn.removeClass('s-ico-up').addClass('s-ico-down');
-                this.contentCtaBtn.text(this.globalText.showMore);
+                target.removeClass('s-ico-up').addClass('s-ico-down');
+                target.text(this.globalText.showMore);
                 this.viewContentFunc();
             }
         }
@@ -359,18 +405,5 @@
 
     $(function() {
         new win.smg.support[manualDownloadPlugin]('.manual-download-filter-new');
-    });  
-
-    // $.fn.pluginCall  = function (pluginName) {
-    //     for (var i = 0, max = this.length; i < max; i++) {
-    //         new pluginName(this.eq(i));
-    //     }
-    // };
-
-    // $(function() {
-    //     $('.manual-download-filter-new__persona').pluginCall(win.smg.support[personaPlugin]);
-    //     $('.manual-download-filter-new__search').pluginCall(win.smg.support[searchPlugin]);
-    //     $('.manual-download-filter-new__module').pluginCall(win.smg.support[filterPlugin]);
-    // });
-        
+    });
 })(window, window.jQuery, window.document)
