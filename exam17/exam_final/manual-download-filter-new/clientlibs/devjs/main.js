@@ -70,12 +70,10 @@
 	    		this.personaBox.on('mouseenter mouseleave', $.proxy(this.onHoverFunc, this));
 	    		this.personaInput.on('change', $.proxy(this.onChangeFunc, this));
 	    		this.resetBtn.on('click', $.proxy(this.onResetFunc, this));
-	    		console.log('PC');
     		} else {
     			this.personaBox.off('mouseenter mouseleave');
     			this.personaInput.off('change');
     			this.resetBtn.off('click');
-	    		console.log('MO');
     		}
     	},
     	onHoverFunc : function (e) {
@@ -236,8 +234,10 @@
         var defParams = {
             container : container,
             filterParent : '.manual-download-filter-new',
+            filterContainer : '.manual-download-filter-new__module-aside',
             filterWrap : '.manual-download-filter-new__filters',
             filterTab : '.manual-download-filter-new__tab',
+            filterTabBtn : '.manual-download-filter-new__tab-btn',
             filterListWrap : '.manual-download-filter-new__list-wrap',
             filterListArea : '.manual-download-filter-new__list',
             filterToggler : '.manual-download-filter-new__list-title',
@@ -252,9 +252,12 @@
             contentCta : '.manual-download-filter-new__content-cta',
             contentCtaBtn : '.s-btn-text',
             showClass : 'is-show',
+            fixedClass : 'is-fixed',
+            openClass : 'is-opened',
             slideSpeed : 150,
             showType : true,
-            listNum : null
+            listNum : null,
+            viewType : null
         }
         this.opts = UTIL.def(defParams, (args || {}));
         if (!(this.obj = $(this.opts.container)).length) return;
@@ -263,14 +266,18 @@
     win.smg.support[filterPlugin].prototype = {
         init : function () {
             this.setElements();
+            this.checkResponsive();
             this.initOpts();
             this.initLayout();
             this.bindEvents();
+            this.resizeFunc();
         },
         setElements : function () {
             this.filterParent = $(this.opts.filterParent);
+            this.filterContainer = this.obj.find(this.opts.filterContainer);
             this.filterWrap = this.obj.find(this.opts.filterWrap);
             this.filterTab = this.filterWrap.find(this.opts.filterTab);
+            this.filterTabBtn = this.filterTab.find(this.opts.filterTabBtn);
             this.filterListWrap = this.filterWrap.find(this.opts.filterListWrap);
             this.filterListArea = this.filterListWrap.find(this.opts.filterListArea);
             this.filterToggler = this.filterListWrap.find(this.opts.filterToggler);
@@ -293,8 +300,12 @@
                 showLess : (globalText && globalText.showLess) ? $.trim(globalText.showLess) : '' 
             };
             this.filterInput.filter(':checked').closest(this.filterInputWrap).addClass(this.opts.checkedClass);
-            // this.filterInput.filter(':checked').closest(this.filterInputWrap).addClass(this.opts.checkedClass);
             this.opts.listNum = this.contentList.data('view-list');
+        },
+        checkResponsive : function () {
+            this.isSupportTransform = (function() {
+                return ('WebkitTransform' in doc.body.style || 'MozTransform' in doc.body.style || 'msTransform' in doc.body.style || 'OTransform' in doc.body.style || 'transform' in doc.body.style);
+            })();
         },
         initLayout : function () {
             if (this.contentItem.length > this.opts.listNum) {
@@ -305,9 +316,30 @@
             this.viewContentFunc();
         },
         bindEvents : function () {
+            $(win).on('resize', $.proxy(this.resizeFunc, this));
             this.filterToggler.on('click', $.proxy(this.onClickFilterToggler, this));
             this.filterInput.on('change', $.proxy(this.onChangeFilter, this));
             this.contentCtaBtn.on('click', $.proxy(this.onClickMore, this));
+        },
+        resizeFunc : function () {
+            this.winWidth = $(win).width();
+
+            clearTimeout(this.clearTime);
+            this.clearTime = setTimeout($.proxy(this.resizeEndFunc, this), 150);
+        },
+        resizeEndFunc : function () {
+            if (this.winWidth >= BREAKPOINTS.MOBILE && this.opts.viewType != 'PC' ) {
+                this.opts.viewType = 'PC';
+
+                $(win).off('scroll');
+            } else if (this.winWidth < BREAKPOINTS.MOBILE && this.opts.viewType != 'MO' && this.isSupportTransform) {
+                this.opts.viewType = 'MO';
+
+                this.checkOffset();
+                $(win).on('scroll', $.proxy(this.onScrollFunc, this));
+                this.filterTabBtn.on('click', $.proxy(this.onClickFilterTab, this));
+            }
+            console.log(this.opts.viewType);
         },
         onClickFilterToggler : function (e) {
             var target = $(e.currentTarget),
@@ -359,6 +391,50 @@
                 target.removeClass('s-ico-up').addClass('s-ico-down');
                 target.text(this.globalText.showMore);
                 this.viewContentFunc();
+            }
+        },
+        checkOffset : function () {
+            this.scrollTop = $(win).scrollTop();
+            this.filterOffset  = this.filterWrap.offset().top;
+            this.filterHeight = this.filterWrap.height();
+            this.filterCurrentOffset = this.filterOffset - this.scrollTop;
+            this.areaEndOffset = this.obj.offset().top + this.obj.height();
+
+            this.filterContainer.css('height', this.filterHeight);
+        },
+        onScrollFunc : function () {
+            this.scrollTop = $(win).scrollTop();
+
+            if (this.scrollTop > this.filterOffset && this.scrollTop < this.areaEndOffset) {
+                this.topPositionFunc(true);
+            } else {
+                this.topPositionFunc(false);
+            }
+        },
+        onClickFilterTab : function (e) {
+            e.preventDefault();
+            this.scrollTop = $(win).scrollTop();
+
+            if (!this.filterWrap.hasClass(this.opts.openClass)) {
+                if (this.scrollTop < this.filterOffset) {
+                    $('html, body').animate({
+                        scrollTop : this.filterOffset
+                    }, this.animateSpeed);
+                }
+                this.filterWrap.addClass(this.opts.openClass);
+            } else {
+                this.filterWrap.removeClass(this.opts.openClass);
+            }
+        },
+        topPositionFunc : function (type) {
+            if (type) {
+                this.filterWrap.addClass(this.opts.fixedClass).animate({
+                    top : 0
+                });
+            } else {
+                this.filterWrap.removeClass(this.opts.fixedClass).animate({
+                    top : ''
+                });
             }
         }
     }
