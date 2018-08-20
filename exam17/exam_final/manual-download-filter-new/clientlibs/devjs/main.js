@@ -254,7 +254,7 @@
             showClass : 'is-show',
             fixedClass : 'is-fixed',
             openClass : 'is-opened',
-            slideSpeed : 150,
+            animateSpeed : 150,
             showType : true,
             listNum : null,
             viewType : null
@@ -351,11 +351,11 @@
             if (!targetListArea.hasClass(this.opts.activeClass)) {
                 targetListArea.addClass(this.opts.activeClass);
                 targetAccess.text(this.globalText.Collapse);
-                targetList.slideDown(this.opts.slideSpeed);
+                targetList.slideDown(this.opts.animateSpeed);
             } else {
                 targetListArea.removeClass(this.opts.activeClass);
                 targetAccess.text(this.globalText.Expand);
-                targetList.slideUp(this.opts.slideSpeed);
+                targetList.slideUp(this.opts.animateSpeed);
             }
         },
         onChangeFilter : function (e) {
@@ -413,15 +413,19 @@
         },
         onClickFilterTab : function (e) {
             e.preventDefault();
+            var _this = this;
             this.scrollTop = $(win).scrollTop();
 
             if (!this.filterWrap.hasClass(this.opts.openClass)) {
                 if (this.scrollTop < this.filterOffset) {
                     $('html, body').animate({
                         scrollTop : this.filterOffset
-                    }, this.animateSpeed);
+                    }, function () {
+                            _this.filterWrap.addClass(_this.opts.openClass);
+                            _this.filterWrap.addClass(_this.opts.fixedClass).css('top', 0);
+                            _this.filterListWrap.css('top', _this.filterHeight);
+                    });
                 }
-                this.filterWrap.addClass(this.opts.openClass);
             } else {
                 this.filterWrap.removeClass(this.opts.openClass);
             }
