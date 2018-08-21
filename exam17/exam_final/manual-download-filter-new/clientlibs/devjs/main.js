@@ -218,7 +218,7 @@
             this.selectList.attr('aria-hidden', false);
             this.selectWrap.addClass(this.opts.openClass);
     		this.accessibilityElem.text(this.globalText.collapse);
-                this.clickOutsideBindEvent(true);
+            this.clickOutsideBindEvent(true);
         },
         closeSelect : function () {
 			this.selectList.slideUp(this.opts.slideSpeed);
@@ -290,6 +290,12 @@
             this.contentItem = this.contentList.find(this.opts.contentItem);
             this.contentCta = this.contentList.find(this.opts.contentCta);
             this.contentCtaBtn = this.contentCta.find(this.opts.contentCtaBtn);
+
+            var dummyFocus = '<span tabindex="-1"></span>';
+            this.filterWrap.before(dummyFocus);
+            this.filterWrap.after(dummyFocus);
+            this.filterWrapPrev = this.filterWrap.prev();
+            this.filterWrapNext = this.filterWrap.next();
         },
         initOpts : function () {
             var globalText = this.filterParent.data('global-text');
@@ -332,14 +338,19 @@
                 this.opts.viewType = 'PC';
 
                 $(win).off('scroll');
+                this.filterTabBtn.off('click');
             } else if (this.winWidth < BREAKPOINTS.MOBILE && this.opts.viewType != 'MO' && this.isSupportTransform) {
                 this.opts.viewType = 'MO';
-
-                this.checkOffset();
+                
                 $(win).on('scroll', $.proxy(this.onScrollFunc, this));
                 this.filterTabBtn.on('click', $.proxy(this.onClickFilterTab, this));
+                this.filterWrapPrev.on('focus', $.proxy(this.changeFocusPrev, this));
+                this.filterWrapNext.on('focus', $.proxy(this.changeFocusNext, this));
             }
-            console.log(this.opts.viewType);
+
+            if (this.opts.viewType === 'MO') {
+                this.checkOffset();
+            }
         },
         onClickFilterToggler : function (e) {
             var target = $(e.currentTarget),
@@ -406,40 +417,63 @@
             this.scrollTop = $(win).scrollTop();
 
             if (this.scrollTop > this.filterOffset && this.scrollTop < this.areaEndOffset) {
-                this.topPositionFunc(true);
+                this.filterWrap.addClass(this.opts.fixedClass).css('top', 0);
             } else {
-                this.topPositionFunc(false);
+                this.filterWrap.removeClass(this.opts.fixedClass).css('top', '');
             }
         },
         onClickFilterTab : function (e) {
-            e.preventDefault();
             var _this = this;
+
+            e.preventDefault();
             this.scrollTop = $(win).scrollTop();
 
             if (!this.filterWrap.hasClass(this.opts.openClass)) {
                 if (this.scrollTop < this.filterOffset) {
-                    $('html, body').animate({
+                    $('html').animate({
                         scrollTop : this.filterOffset
-                    }, function () {
-                            _this.filterWrap.addClass(_this.opts.openClass);
-                            _this.filterWrap.addClass(_this.opts.fixedClass).css('top', 0);
-                            _this.filterListWrap.css('top', _this.filterHeight);
+                    }, this.animateSpeed, function () {
+                        _this.openFilterTab();
                     });
+                } else {
+                    this.openFilterTab();
                 }
             } else {
-                this.filterWrap.removeClass(this.opts.openClass);
+                this.closeFilterTab();
             }
         },
-        topPositionFunc : function (type) {
+        openFilterTab : function () {
+            $('html').addClass('hive-scroll-lock');
+            this.filterWrap.addClass(this.opts.openClass);
+            this.filterWrap.addClass(this.opts.fixedClass).css('top', 0);
+            this.filterListWrap.css('top', this.filterHeight);
+            this.filterWrapPrev.attr('tabindex', '0');
+            this.filterWrapNext.attr('tabindex', '0');
+            setTimeout($.proxy(function() {
+                this.clickOutsideBindEvent(true);  
+            }, this), 30);
+        },
+        closeFilterTab : function () {
+            $('html').removeClass('hive-scroll-lock');
+            this.filterWrap.removeClass(this.opts.openClass);
+            this.filterWrapPrev.attr('tabindex', '-1');
+            this.filterWrapNext.attr('tabindex', '-1');
+            setTimeout($.proxy(function() {
+                this.clickOutsideBindEvent(false);  
+            }, this), 30);
+        },
+        clickOutsideBindEvent : function (type) {
             if (type) {
-                this.filterWrap.addClass(this.opts.fixedClass).animate({
-                    top : 0
-                });
+                this.filterListWrap.on('clickoutside', $.proxy(this.closeFilterTab, this));
             } else {
-                this.filterWrap.removeClass(this.opts.fixedClass).animate({
-                    top : ''
-                });
+                this.filterListWrap.off('clickoutside');
             }
+        },
+        changeFocusPrev : function () {
+            this.filterWrap.find('a, input, button, select').filter(':visible').last().focus();
+        },
+        changeFocusNext : function () {
+            this.filterWrap.find('a, input, button, select').filter(':visible').first().focus();
         }
     }
 
