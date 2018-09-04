@@ -1,6 +1,45 @@
 # Study
 
-## Exam 03
+## Study 01 : Selector 연습
+
+* 순수 JavaScript를 활용한 경우 DOM 제어에 상당한 어려움이 있음
+* Selector 예제를 통해 순수 JavaScript와 jQuery 라이브러리를 사용하여 DOM을 선택하고 제어하는 것의 차이를 체감
+* 예시) 클래스명으로 요소 선택
+	JS     : var examObj1 = document.getElementsByClassName('exam_wrap')[0];
+    jQuery : var examObj1 = $('.exam_wrap:eq(0)');
+
+
+```html
+	<script>
+	// JS로 DOM 제어
+	var examObj3 = document.getElementsByClassName('exam_wrap')[2];
+	examObj3.getElementsByTagName('button')[0].onclick = function(){
+		var examChild = examObj3.getElementsByClassName('exam_q')[0].querySelectorAll('*');
+		for (var i = 0; i < examChild.length; i++) {
+			var condition1 =  examChild[i].previousElementSibling;
+			if (condition1 == null) {
+				examChild[i].style.backgroundColor = 'yellow';
+			}
+		}
+	};
+
+	// 동일한 기능을 jQuery를 사용하여 DOM 제어
+	var examObj3 = $('.exam_wrap:eq(2)');
+	examObj3.find('button').on('click', function(){
+		examObj3.find('.exam_q *:first-child').css('background','yellow');
+	});
+	</script>
+```
+
+## Study 02 : if, for, while 문 연습
+
+* if, switch와 같은 조건문과 for, while과 같은 반복문을 활용해 보는 예제를 통해 특정 조건의 경우 함수 실행하는 방법을 숙지
+* if문의 경우 
+
+* .append() : 
+
+
+## Study 03 : 
 
 * $.proxy(function, context) : 
 
