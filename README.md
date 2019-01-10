@@ -229,14 +229,40 @@ $( "input" ).focus(function() {
 	* 함수가 쌓이는 순서와 반대로 실행이 됨; LIFO(마지막에 들어온 것이 먼저 나감) 구조
 	* 브라우저마다 호출 스택 최대치가 다르며 보통 만개 정도로 보고 있음
 * **이벤트 루프**
-	* JS는 보통 **싱글 쓰레드(single thread)** 라고 불림
-* **setTimeout** : 
+	* JS는 보통 **싱글 쓰레드(single thread)** 라고 불림 (메인 쓰레드인 이벤트 루프가 싱글 쓰레드임)
+	
+	```html
+	<script>
+	function run() {
+	  console.log('동작');
+	}
+	console.log('시작');
+	setTimeout(run, 0);
+	console.log('끝'); // 시작, 끝, 동작 순으로 console에 찍힘
+	</script>
+	```
+	
+	* setTimeout이 0초로 설정되었음에도 마지막에 실행되는 것은 이벤트 루프로 인ㄴ한것인데, setTimeout 함수가 호출 스택에서 실행 시 콜백 함수인 run은 **백그라운드** 로 보내지고 여기서 3초가 지난 뒤 **태스크 큐** 로 run 함수가 보내짐. 호출 스택이 비워지면 (전역 컨텍스트의 main 실행이 종료되면) 태스크 큐에서 함수를 하나씩 호출 스택으로 밀어 올리고 함수가 실행이 되면 호출 스택에서 제거됨.
+	* setTimeout 0초도 마찬가지로 setTimeout을 쓰는ㄴ 순간 백그라운드를 거쳐 태크스 큐로 run 함수가 이동하게 됨 (실질적으로 setTimeout은 4ms 지연 시간을 가지고 있음으로 0초가 아님)
+	* 시각적으로 이벤트 루프 확인 : http://latentflip.com/loupe/
+	
 * Reference : https://stackoverflow.com/questions/779379/why-is-settimeoutfn-0-sometimes-useful
 * Reference : https://www.zerocho.com/category/JavaScript/post/597f34bbb428530018e8e6e2
 
 ## Study 06 : Slick & Hash
 
-* 
+* **location.hash** : 샵(#)을 포함한 앵커 이름을 반환
+* **match()** : [jQuery API] string.match(regexp) 문자열을 탐색하여 regular expression과 일치하는 값을 배열로 반환함
+* **event.delegateTarget** : [jQuery API] 호출 된 이벤트 핸들러가 바인딩 된 요소를 가리킴
+
+```html
+<script>
+// box 내 버튼이 클릭 될 경우 box의 배경색을 변경함
+$( ".box" ).on( "click", "button", function( event ) {
+  $( event.delegateTarget ).css( "background-color", "red" );
+});
+</script>
+```
 
 ## Study 08 :  
 
