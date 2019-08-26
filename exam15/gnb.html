@@ -148,48 +148,51 @@
             this.isSupportTransform = (function() {
                 return ('WebkitTransform' in doc.body.style || 'MozTransform' in doc.body.style || 'msTransform' in doc.body.style || 'OTransform' in doc.body.style || 'transform' in doc.body.style);
             })();
-            console.log(this.isSupportTransform);
         },
         bindEvents : function () {
             $(win).on('resize', $.proxy(this.resizeFunc, this));
         },
         resizeFunc : function () {
             this.winWidth = $(win).width();
-
-            clearTimeout(this.endFuncTimeout);
-            this.endFuncTimeout = setTimeout($.proxy(this.resizeEndFunc, this), 200);
+            if (this.opts.resizeStart == null) {
+                this.opts.resizeStart = this.winWidth;
+            }
+            win.clearTimeout(this.endFuncTimeout);
+            this.endFuncTimeout = setTimeout($.proxy(this.resizeEndFunc, this), 150);
         },
         resizeEndFunc : function () {
-            if (this.winWidth > this.opts.breakPoint) {
-                this.subMenu.hide();
-                this.closeMenu();
-                this.openBtn.off('click');
-                this.closeBtn.off('click');
-            } else if (this.isSupportTransform) {
-                this.subMenu.show();
-                this.openBtn.on('click', $.proxy(this.openMenu, this));  
-                this.closeBtn.on('click', $.proxy(this.closeMenu, this));
-            }
-
-            clearTimeout(this.endFuncTimeout);
-            this.endFuncTimeout = setTimeout($.proxy(this.resizeEndFunc, this), 200);
+            this.opts.resizeStart = null;
+            this.setLayout();
         },
-        resizeEndFunc : function () {
-            if (this.winWidth > this.opts.breakPoint && this.opts.viewType != 'PC' ) {
-                this.opts.viewType = 'PC';
-                this.onHoverMenu(true);
-            } else if (this.winWidth <= this.opts.breakPoint && this.opts.viewType != 'MO' && this.isSupportTransform) {
-                this.opts.viewType = 'MO';
-                this.onHoverMenu(false);
+        setLayout : function () {
+            if (!this.checkResponsive || this.checkResponsive && (this.winWidth > this.opts.breakPoint)) {
+                if (this.opts.viewType !== 'pc') {
+                    this.opts.viewType = 'pc';
+                    this.bindEventPc(true);
+                    this.bindEventMo(false);
+                }
+            } else {
+                if (this.opts.viewType !== 'mo') {
+                    this.opts.viewType = 'mo';
+                    this.bindEventPc(false);                    
+                    this.bindEventMo(true);
+                }
             }
         },
-        onHoverMenu : function (type) {
+        bindEventPc : function (type) {
             if (type) {
                 this.gnbItem.on('mouseenter mouseleave focusin focusout', $.proxy(this.hoverMenuFunc, this));
-                console.log('PC');
             } else {
                 this.gnbItem.off('mouseenter mouseleave focusin focusout');
-                console.log('MO');
+            }
+        },
+        bindEventMo : function (type) {
+            if (type) {
+                this.openBtn.on('click', $.proxy(this.openMenu, this));
+                this.closeBtn.on('click', $.proxy(this.closeMenu, this));
+            } else {
+                this.openBtn.off('click');
+                this.closeBtn.off('click');
             }
         },
         hoverMenuFunc : function (e) {
